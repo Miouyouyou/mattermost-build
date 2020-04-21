@@ -61,7 +61,9 @@ RUN setcap cap_net_bind_service=+ep /mattermost/bin/mattermost
 USER mattermost
 
 #Healthcheck to make sure container is ready
-HEALTHCHECK CMD curl --fail http://localhost:8000 || exit 1
+HEALTHCHECK --interval=5m --timeout=3s \
+  CMD curl -f http://localhost:8065/api/v4/system/ping || exit 1
+
 
 # Configure entrypoint and command
 COPY entrypoint.sh /
@@ -69,8 +71,7 @@ ENTRYPOINT ["/entrypoint.sh"]
 WORKDIR /mattermost
 CMD ["mattermost"]
 
-# Expose port 8000 of the container
-EXPOSE 8000
+EXPOSE 8065 8067 8074 8075
 
 # Declare volumes for mount point directories
 VOLUME ["/mattermost/data", "/mattermost/logs", "/mattermost/config", "/mattermost/plugins", "/mattermost/client/plugins"]
