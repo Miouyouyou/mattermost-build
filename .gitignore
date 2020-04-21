@@ -1,0 +1,12 @@
+*.bak
+*#
+\#*
+*.orig
+*~
+*.*swp
+.vs
+.kde*
+.qt*
+*.so
+*.exe
+
