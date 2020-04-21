@@ -1,6 +1,8 @@
+ARG git_tag="master"
+
 FROM mattermost/mattermost-build-webapp as webapp-builder
 
-RUN cd /tmp && git clone --depth 1 https://github.com/Miouyouyou/mattermost-webapp
+RUN cd /tmp && git clone --depth 1 https://github.com/Miouyouyou/mattermost-webapp -b $git_tag
 RUN cd /tmp/mattermost-webapp && \
 	npm ci &&\
 	cd node_modules/mattermost-redux && npm i && npm run build
@@ -15,7 +17,7 @@ FROM mattermost/mattermost-build-server as server-builder
 
 COPY --from=webapp-builder /tmp/mattermost-webapp /tmp/mattermost-webapp
 
-RUN cd /tmp && git clone --depth 1 https://github.com/Miouyouyou/mattermost-server
+RUN cd /tmp && git clone --depth 1 https://github.com/Miouyouyou/mattermost-server -b $git_tag
 RUN cd /tmp/mattermost-server && make app-layers
 RUN cd /tmp/mattermost-server && make store-layers
 RUN cd /tmp/mattermost-server && make config-reset
