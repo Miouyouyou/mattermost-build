@@ -1,6 +1,6 @@
-ARG git_tag="master"
-
 FROM mattermost/mattermost-build-webapp as webapp-builder
+
+ARG git_tag="master"
 
 RUN cd /tmp && git clone --depth 1 https://github.com/Miouyouyou/mattermost-webapp -b $git_tag
 RUN cd /tmp/mattermost-webapp && \
@@ -14,6 +14,8 @@ RUN cd /tmp/mattermost-webapp && npm run check-types
 RUN cd /tmp/mattermost-webapp && make package-ci
 
 FROM mattermost/mattermost-build-server as server-builder
+
+ARG git_tag="master"
 
 COPY --from=webapp-builder /tmp/mattermost-webapp /tmp/mattermost-webapp
 
