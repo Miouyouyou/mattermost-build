@@ -10,11 +10,8 @@ on:
     tags:
       - v*
 
-  # Run tests for any PRs.
-  pull_request:
-
-env:
-  # TODO: Change variable to your image's name.
+# TODO: Check how to build for the master branch and the latest tag
+env: 
   IMAGE_NAME: mattermeow-server
   VERSION: v5.22.0
 

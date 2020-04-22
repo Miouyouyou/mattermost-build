@@ -1,0 +1,47 @@
+version: '2.4'
+services:
+  postgres:
+    image: "postgres:9.4"
+    restart: always
+    networks:
+      - mm-test
+    environment:
+      POSTGRES_USER: mmuser
+      POSTGRES_PASSWORD: mostest
+      POSTGRES_DB: mattermost_test
+    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
+    volumes:
+     - "./docker/postgres.conf:/etc/postgresql/postgresql.conf"
+  minio:
+    image: "minio/minio"
+    command: "server /data"
+    networks:
+      - mm-test
+    environment:
+      MINIO_ACCESS_KEY: MonCochonDindeFaitDuKungFu
+      MINIO_SECRET_KEY: OuaisMaisJePrefereDonaldDuck
+      MINIO_SSE_MASTER_KEY: "my-minio-key:6368616e676520746869732070617373776f726420746f206120736563726574"
+  elasticsearch:
+    image: "docker.pkg.github.com/miouyouyou/mattermost-elasticsearch-docker/mattermeow-elasticsearch:v1.0"
+    networks:
+      - mm-test
+    environment:
+      http.host: "0.0.0.0"
+      transport.host: "127.0.0.1"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+
+  start_dependencies:
+    image: "docker.pkg.github.com/miouyouyou/docker-wait-for-dependencies/myy-waitfordeps:v1.0"
+    networks:
+      - mm-test
+    depends_on:
+      - mysql
+      - postgres
+      - minio
+      - inbucket
+      - openldap
+      - elasticsearch
+    command: postgres:5432 mysql:3306 minio:9000 inbucket:10080 openldap:389 elasticsearch:9200
+networks:
+  mm-test:
+    driver: bridge
